@@ -1,0 +1,37 @@
+{
+    "environments": {
+        "DEV": {
+            "base_url": "holog-dev.mobility.hubone.cloud",
+            "env_name": "DEV",
+
+            "keyvault" : {
+                "base_url" : "kv-infra-hodev.vault.azure.net",
+                "bus_id" : "cxstring-sbta-holog-dev-hodev",
+                "database_id" : "cxstring-sqldb-holog-dev-hodev",
+                "storageaccount_id" : "cxstring-sthologdevhodev"
+            }
+        },
+        "REC": {
+            "base_url": "holog-rec.mobility.hubone.cloud",
+            "env_name": "REC",
+
+            "keyvault" : {
+                "base_url" : "kv-infra-horec.vault.azure.net",
+                "bus_id" : "cxstring-sbta-holog-rec-horec",
+                "database_id" : "cxstring-sqldb-holog-rec-horec",
+                "storageaccount_id" : "cxstring-sthologrechorec"
+            }
+        },
+        "VABF": {
+            "base_url": "holog-vabf.mobility.hubone.cloud",
+            "env_name": "VABF",
+
+            "keyvault" : {
+                "base_url" : "kv-infra-horec.vault.azure.net",
+                "bus_id" : "cxstring-sbta-holog-rec-horec",
+                "database_id" : "cxstring-sqldb-holog-rec-horec",
+                "storageaccount_id" : "cxstring-sthologrechorec"
+            }
+        }
+    }
+}
