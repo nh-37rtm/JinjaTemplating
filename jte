@@ -33,6 +33,7 @@ def main( args: Dict ):
     formatChoice : Dict[str, Any] = { 
         'json' : lambda : jsonParser.ImportJsonFile(args.input),
         'yaml' : lambda : yamlParser.ImportYamlFile(args.input),
+        'yml' : lambda : yamlParser.ImportYamlFile(args.input),
         'env' : lambda : envFileParser.ImportEnvFile(args.input)
     }
 

@@ -28,9 +28,9 @@
 
             "keyvault" : {
                 "base_url" : "kv-infra-horec.vault.azure.net",
-                "bus_id" : "cxstring-sbta-holog-rec-horec",
-                "database_id" : "cxstring-sqldb-holog-rec-horec",
-                "storageaccount_id" : "cxstring-sthologrechorec"
+                "bus_id" : "cxstring-sbta-holog-vabf-horec",
+                "database_id" : "cxstring-sqldb-holog-vabf-horec",
+                "storageaccount_id" : "cxstring-sthologvabfhorec"
             }
         }
     }

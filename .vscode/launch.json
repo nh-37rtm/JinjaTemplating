@@ -11,7 +11,8 @@
             "program": "/home/nheim/src/JinjaTemplating/jte",
             "console": "integratedTerminal",
             // "args": [ "-i", "./Test/vars.json", "-t", "./Test/toto.j2" ]
-            "args": [ "-i", "./Tests/Resources/Mails/horus_logistique.json", "-t", "./Tests/Resources/Mails/Templates/mails.j2" ]
+            // "args": [ "-i", "./Tests/Resources/Mails/horus_logistique.json", "-t", "./Tests/Resources/Mails/Templates/mails-dev.j2" ]
+            "args": [ "-i", "./Tests/Resources/Mails/MFM.json", "-t", "./Tests/Resources/Mails/Templates/mails-ops.j2" ]
         }
     ]
 }
