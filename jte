@@ -6,10 +6,12 @@ from nis import match
 import os
 import pprint
 import Modules.CustomLogging as customLogging
-from typing import Dict, Any
+from typing import Dict, Any, List
 import codecs
 import sys
 import glob
+
+import subprocess
 
 import Modules.RendererContext as Context
 
@@ -24,6 +26,29 @@ def writeFile(outputFile : codecs.StreamReaderWriter, data: str) -> None:
 def openFile(fileName: str) -> codecs.StreamReaderWriter :
     with codecs.open(fileName, "azer", errors='strict') as fileDescriptor:
         return fileDescriptor
+
+def validateOutput( args: Dict ):
+
+    validatorActions: Dict = {}
+
+    validators : Dict[str, Any] = { 
+        'json' : lambda : jsonParser.ImportJsonFile(args.output),
+        'yaml' : lambda : yamlParser.ImportYamlFile(args.output, True),
+        'kube' : lambda : subprocess.check_output(['kubectl', 'apply', '-f', args.output, '--dry-run=client'])
+    }
+
+    for validator in args.output_validator:
+        if ( validator in validators.keys() ) :
+            validatorActions[validator] = validators[validator]
+        else :
+            raise Exception( f'Unknown format : {args.format} waiting for any of {formatChoice.keys()}')
+
+    logger.info(f"running validators on output {args.output} ...")
+
+    for validatorName, validateAction in validatorActions.items():
+        logger.info(f"passing the {validatorName} validator ...")
+        validateAction()
+        logger.info(f"validator passed successfully !")
 
 def customizeOne( args: Dict ):
 
@@ -60,6 +85,9 @@ def customizeOne( args: Dict ):
         output= args.output,
         data=dataDictionnary )
 
+    if len(args.output_validator) > 0:
+        validateOutput(args)
+
 
 def customizeMulti( args: Dict, configFileAsList: Dict ):
     
@@ -84,6 +112,12 @@ def customizeMulti( args: Dict, configFileAsList: Dict ):
         args.format = templateAttributes['contextFormat']
         args.output = templateAttributes['outputFile']
 
+        if 'outputValidator' in templateAttributes:
+            args.output_validator = templateAttributes['outputValidator']
+            ## TODO verifier la diff str os.stdout ...
+            if args.output is None:
+                parser.error("cannot validate if no output file set")
+
         if 'templatingContext' in templateAttributes:
            args.input = templateAttributes['templatingContext']
 
@@ -104,9 +138,11 @@ if __name__ == "__main__":
     parser.add_argument('-f', '--format', required=False)
     parser.add_argument('-o', '--output', required=False)
     parser.add_argument('-t', '--template', required=False)
-    parser.add_argument('-r', '--reference-path', 
+    parser.add_argument('-r', '--reference-path',
         default=os.getcwd(), required=False)
-    
+    parser.add_argument('-v', '--output-validator', 
+        action='append', required=False)
+
     args=parser.parse_args()
     if not args.config_file is None :
         if args.format is not None \
@@ -121,6 +157,8 @@ if __name__ == "__main__":
         if args.input is None:
             args.input = sys.stdin
         if args.output is None:
+            if not args.output_validator is None:
+                parser.error("cannot validate if no output file set")
             args.output = sys.stdout
 
     logger = customLogging.BuildCustomLogger("root")
