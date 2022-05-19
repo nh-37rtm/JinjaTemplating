@@ -10,10 +10,12 @@ class RendererContext:
 
     logger_ = logging.getLogger("root")
     templateBaseDir_ : str = None
+    templateReferencePath_ : str = None
 
     # default constructor
-    def __init__(self, customControler):
-        self.jinjaTemplateLoader_ = FileSystemLoader(os.getcwd())
+    def __init__(self, customControler, templateReferencePath = os.getcwd()):
+        self.templateReferencePath_ = templateReferencePath
+        self.jinjaTemplateLoader_ = FileSystemLoader(templateReferencePath)
         self.jinjaTemplateEnv_ = Environment(loader=self.jinjaTemplateLoader_)
         self.controler = customControler
 
@@ -27,14 +29,21 @@ class RendererContext:
             # TODO implement infinite loops detection
             
             self.templateBaseDir_ =  os.path.dirname(templatePath)
-            self.logger_.info(f'rendering {templatePath} ...')
+            self.logger_.info(f'rendering {templatePath} to {output} ...')
+
+            if os.path.exists(output) and os.path.isfile(output):
+                self.logger_.info(f'{output} exists and is a file, overwriting ...')
 
             try :
                 template = self.jinjaTemplateEnv_.get_template(templatePath)
                 if ( not dryRunSwitch ):
-                    template.stream(data, context= self, os=os).dump(output)
+                    template.stream(data, context= self, os=os).dump(output)               
             except Exception as e:
-                self.logger_.error(f'ko : {e}')
+                typeName: str = type(e).__name__
+                if typeName == 'TemplateSyntaxError':
+                    self.logger_.error(f'ko : Exception {typeName} in {e.name} => {e.message} at line {e.lineno}')
+                else:
+                    self.logger_.error(f'ko : Exception {typeName} => {e}')
             else :
                 self.logger_.info(f'{templatePath} rendered')
             finally :

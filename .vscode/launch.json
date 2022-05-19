@@ -8,11 +8,15 @@
          "name": "Python: Current File",
             "type": "python",
             "request": "launch",
-            "program": "/home/nheim/src/JinjaTemplating/jte",
+            "program": "/home/nheim/xperience/JinjaTemplates/jte",
+            "cwd": "${workspaceFolder}",
             "console": "integratedTerminal",
             // "args": [ "-i", "./Test/vars.json", "-t", "./Test/toto.j2" ]
             // "args": [ "-i", "./Tests/Resources/Mails/horus_logistique.json", "-t", "./Tests/Resources/Mails/Templates/mails-dev.j2" ]
-            "args": [ "-i", "./Tests/Resources/Mails/MFM.json", "-t", "./Tests/Resources/Mails/Templates/mails-ops.j2" ]
+            // "args": [ "-i", "./Tests/Resources/Mails/MFM.json", "-t", "./Tests/Resources/Mails/Templates/mails-ops.j2" ]
+            //"args": [ "-i", "/home/nheim/xperience/xperience-indus/environments/dev.json", "-t", "/home/nheim/xperience/xperience-keycloak/build/build.Dockerfile.j2" ]
+             "args": [ "-c", "/home/nheim/xperience/xperience-keycloak/ci/templating.conf.yml", "-r", "/home/nheim/xperience/", "-i", "xperience-indus/environments/test.yaml" ]
+            
         }
     ]
 }
