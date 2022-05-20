@@ -26,7 +26,7 @@
             "args": [ 
                 "-c", "/home/nheim/xperience/xperience-indus/environments/templating.conf.yml",
                 "-r", "/home/nheim/xperience/", 
-                "-i", "xperience-indus/environments/test.yaml",
+                "-i", "xperience-indus/environments/preprod.yaml",
                 "-v", "yaml"
             ]
         }
