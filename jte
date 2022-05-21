@@ -10,6 +10,7 @@ from typing import Dict, Any, List
 import codecs
 import sys
 import glob
+import copy
 
 import subprocess
 
@@ -41,7 +42,7 @@ def validateOutput( args: Dict ):
         if ( validator in validators.keys() ) :
             validatorActions[validator] = validators[validator]
         else :
-            raise Exception( f'Unknown format : {args.format} waiting for any of {formatChoice.keys()}')
+            raise Exception( f'Unknown format : {validator} waiting for any of {validators.keys()}')
 
     logger.info(f"running validators on output {args.output} ...")
 
@@ -106,22 +107,29 @@ def customizeMulti( args: Dict, configFileAsList: Dict ):
         else:
             expandedDict[templateFileName] = templateAttributes
 
+    templateNumber: int = 0
     for templateFileName, templateAttributes in expandedDict.items():
+        templateArgs = copy.deepcopy(args)
         logger.info(f"processing template file '{templateFileName}' ...")
-        args.template = templateFileName
-        args.format = templateAttributes['contextFormat']
-        args.output = templateAttributes['outputFile']
+        templateArgs.template = templateFileName
+        templateArgs.format = templateAttributes['contextFormat']
+        templateArgs.output = templateAttributes['outputFile']
 
         if 'outputValidator' in templateAttributes:
-            args.output_validator = templateAttributes['outputValidator']
+            templateArgs.output_validator = [ templateAttributes['outputValidator'] ]
             ## TODO verifier la diff str os.stdout ...
-            if args.output is None:
+            if templateArgs.output is None:
                 parser.error("cannot validate if no output file set")
+        else:
+            templateArgs.output_validator = []
+        #TODO manage override
 
         if 'templatingContext' in templateAttributes:
-           args.input = templateAttributes['templatingContext']
+           templateArgs.input = templateAttributes['templatingContext']
+        templateNumber+=1
+        customizeOne(templateArgs)
 
-        customizeOne(args)
+    logger.info(f"{templateNumber} templates processed")
 
 # =============================================
 if __name__ == "__main__":
