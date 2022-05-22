@@ -26,7 +26,8 @@ class RendererContext:
     def linfo(self, text: str):
         self.logger_.info(text)
         return '' # avoid printing None in templates
-
+    def getEnv(self, varName: str):
+        return os.environ[varName]
     def getDateTime(self):
         return datetime.now().strftime("%H:%M:%S")
 
@@ -51,10 +52,13 @@ class RendererContext:
                     template.stream(data, context= self, os=os).dump(output)
             except Exception as e:
                 typeName: str = type(e).__name__
+                errorMessage: str = None
                 if typeName == 'TemplateSyntaxError':
-                    self.logger_.error(f'ko : Exception {typeName} in {e.name} => {e.message} at line {e.lineno}')
+                    errorMessage = f'ko : Exception {typeName} in {e.name} => {e.message} at line {e.lineno}'
                 else:
-                    self.logger_.error(f'ko : Exception {typeName} => {e}')
+                    errorMessage = f'ko : Exception {typeName} => {e}'
+                self.logger_.error(errorMessage)
+                raise e
             else :
                 self.logger_.info(f'{templatePath} rendered')
             finally :

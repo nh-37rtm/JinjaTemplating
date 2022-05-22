@@ -97,7 +97,7 @@ def customizeMulti( args: Dict, configFileAsList: Dict ):
     expandedDict: Dict = {}
 
     for templateFileName, templateAttributes in configFileAsList.items():
-        if templateAttributes['expandGlobInTemplateName']:
+        if 'expandGlobInTemplateName' in templateAttributes:
             logger.info(f"expanding expression '{templateFileName}' ...")
             for expandedTemplateFileName in glob.glob(templateFileName):
                 logger.info(f"file mathing found '{expandedTemplateFileName}' to process ...")
