@@ -35,7 +35,8 @@ def validateOutput( args: Dict ):
     validators : Dict[str, Any] = { 
         'json' : lambda : jsonParser.ImportJsonFile(args.output),
         'yaml' : lambda : yamlParser.ImportYamlFile(args.output, True),
-        'kube' : lambda : subprocess.check_output(['kubectl', 'apply', '-f', args.output, '--dry-run=client'])
+        'kube' : lambda : subprocess.check_output(['kubectl', 'apply', '-f', args.output, '--dry-run=server']),
+        'kustomize' : lambda : subprocess.check_output(['kubectl', 'apply', '-k', args.output, '--dry-run=server'])
     }
 
     for validator in args.output_validator:
