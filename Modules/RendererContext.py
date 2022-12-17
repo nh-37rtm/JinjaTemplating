@@ -3,6 +3,8 @@ import os
 import logging
 import sys
 import codecs
+import random
+import string
 from datetime import datetime
 
 from typing import List
@@ -30,6 +32,11 @@ class RendererContext:
         return os.environ[varName]
     def getDateTime(self):
         return datetime.now().strftime("%H:%M:%S")
+
+    def generatePassword(self):
+        self.logger_.info("generating password...")
+        result_str = ''.join(random.choice( ''.join( [string.ascii_letters, '.*-_()[]'])) for i in range(10))
+        return result_str
 
     def renderTemplate(
         self, 
