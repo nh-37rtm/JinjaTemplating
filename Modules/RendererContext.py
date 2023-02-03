@@ -38,6 +38,16 @@ class RendererContext:
         result_str = ''.join(random.choice( ''.join( [string.ascii_letters, '.*-_()[]'])) for i in range(10))
         return result_str
 
+    def iif(self, condition, value1: str, value2: str) -> str:
+        if condition and value1: 
+            return value1
+        return value2
+
+    def default(self, value1: str, value2: str) -> str:
+        if value1: 
+            return value1
+        return value2
+
     def renderTemplate(
         self, 
         templatePath: str, 
