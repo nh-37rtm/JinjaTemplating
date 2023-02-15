@@ -5,6 +5,8 @@ import sys
 import codecs
 import random
 import string
+from urllib.parse import urljoin
+
 from datetime import datetime
 
 from typing import List
@@ -37,6 +39,9 @@ class RendererContext:
         self.logger_.info("generating password...")
         result_str = ''.join(random.choice( ''.join( [string.ascii_letters, '.*-_()[]'])) for i in range(10))
         return result_str
+
+    def urlJoin(self, base, url):
+        return urljoin(base=base, url=url, allow_fragments=True)
 
     def iif(self, condition, value1: str, value2: str) -> str:
         if condition and value1: 
