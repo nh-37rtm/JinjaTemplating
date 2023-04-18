@@ -87,9 +87,14 @@ def customizeOne( args: Dict ):
         output= args.output,
         data=dataDictionnary )
 
-    if len(args.output_validator) > 0:
+    if args.output_validator is not None and len(args.output_validator) > 0:
         validateOutput(args)
 
+def customizeMultiImplicitDir( args: Dict ):
+    if not os.path.isdir(args.template):
+        raise('should be a directory')
+    
+    glob.glob(args.template)
 
 def customizeMulti( args: Dict, configFileAsList: Dict ):
     
@@ -165,6 +170,7 @@ def validateArgsAndRun(args):
         config: Dict = yamlParser.ImportYamlFile(args.config_file)
         customizeMulti(args, config)
     else:
+        # if( os.path.isdir(args.template) )
         customizeOne(args)
 
     logger.info("script clean end")

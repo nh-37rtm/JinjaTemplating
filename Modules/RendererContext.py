@@ -64,9 +64,11 @@ class RendererContext:
             
             self.templateBaseDir_ =  os.path.dirname(templatePath)
             self.logger_.info(f'rendering {templatePath} to {output} ...')
-
-            if os.path.exists(output) and os.path.isfile(output):
-                self.logger_.info(f'{output} exists and is a file, overwriting ...')
+            
+            if isinstance(output, str) and \
+                os.path.exists(output) and \
+                os.path.isfile(output):
+                    self.logger_.info(f'{output} exists and is a file, overwriting ...')
 
             try :
                 template = self.jinjaTemplateEnv_.get_template(templatePath)
