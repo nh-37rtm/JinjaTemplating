@@ -1,9 +1,11 @@
 from cmath import e
 from nis import match
 import os
+import io
 import pprint
 import Modules.CustomLogging as customLogging
 from typing import Dict, Any, List
+import typing as t
 import codecs
 import sys
 import glob
@@ -31,6 +33,10 @@ def openFile(fileName: str) -> codecs.StreamReaderWriter :
 def validateOutput( args: Dict ):
 
     validatorActions: Dict = {}
+
+    if isinstance(args.output, io.TextIOWrapper):
+        logger.warning('cannot validate stream')
+        return
 
     validators : Dict[str, Any] = { 
         'json' : lambda : jsonParser.ImportJsonFile(args.output),
@@ -82,9 +88,12 @@ def customizeOne( args: Dict ):
     #     case _:
     #         raise Exception(f'Unkown format : {args.format}')
 
+    template_name_length = len(args.template)
+
     renderedTemplate = context.renderTemplate(
         templatePath= args.template,
-        output= args.output,
+        output= args.template[0:template_name_length - 3],
+        #output= args.output,
         data=dataDictionnary )
 
     if args.output_validator is not None and len(args.output_validator) > 0:
