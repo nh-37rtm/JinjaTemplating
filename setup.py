@@ -3,13 +3,10 @@ from setuptools import setup
 setup(
    name="jinja-templating",
    requires=[ "jinja2", "pyyaml"],
-#    extras_require = {
-#        'dev': ['pylint', 'pytest'],
-#    },
-    packages= ['.'],
-#  package_dir= { 'src': "jinja_templating" },
-#    install_requires=[
-#          'Jinja2>=3',
-#          'PyYAML'
-#      ]
+   version='0.1.0',
+   description='templating engine using jinja2',
+   extras_require = {
+       'dev': ['pylint', 'pytest'],
+   },
+   scripts= [ 'jte' ]
 )
