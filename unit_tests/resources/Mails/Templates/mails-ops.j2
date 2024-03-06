@@ -1,0 +1,9 @@
+{%- for environement in ( 'PPR', 'PRD' ) -%}
+## Customisation dynamique sur environnement : {{environement.env_name}} ...
+    {{-
+        context.renderTemplate( 
+            os.path.join(context.templateBaseDir_, "mails.j2.md"), 
+            environments[environement], 
+            'toto.{}.md'.format(environement) )
+    }}
+{% endfor %}

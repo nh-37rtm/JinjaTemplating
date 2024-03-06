@@ -1,0 +1,28 @@
+{
+    "environments": {
+        "PPR": {
+            "base_url": "homfm-ppr.mobility.hubone.cloud",
+            "env_name": "PPR",
+            "project_name": "Mobile Fleet Management",
+            "readme_link": "https://dev.azure.com/huboneEDL/Hub%20One%20-%20Mobile%20Fleet%20Management",
+            "keyvault" : {
+                "base_url" : "kv-infra-hoppr.vault.azure.net",
+                "bus_id" : "cxstring-sbta-homfm-ppr-hoppr",
+                "database_id" : "cxstring-sqldb-homfm-ppr-hoppr",
+                "storageaccount_id" : "cxstring-sthomfmpprhoppr"
+            }
+        },
+        "PRD": {
+            "base_url": "homfm-prd.mobility.hubone.cloud",
+            "env_name": "PRD",
+            "project_name": "Mobile Fleet Management",
+
+            "keyvault" : {
+                "base_url" : "kv-infra-hoprd.vault.azure.net",
+                "bus_id" : "cxstring-sbta-homfm-prd-hoprd",
+                "database_id" : "cxstring-sqldb-homfm-prd-hoprd",
+                "storageaccount_id" : "cxstring-sthomfmprdhoprd"
+            }
+        }
+    }
+}

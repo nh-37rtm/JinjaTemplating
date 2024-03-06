@@ -3,7 +3,7 @@
 import argparse
 import os
 
-import Modules.EntryPoint as EntryPoint
+import jinja_templating.modules.entry_point as EntryPoint
 
 # =============================================
 if __name__ == "__main__":
