@@ -2,3 +2,5 @@ NOM=TOTO
 # NOM=TUTU
 
 PRENOM=TATA
+
+person=Nicolas
