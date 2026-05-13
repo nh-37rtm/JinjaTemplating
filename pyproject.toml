@@ -13,7 +13,7 @@ dependencies = [
 dev = ["pylint", "pytest"]
 
 [console_scripts]
-jte = "jinja_templating:modules:entry_point:jte"
+jte = "tsss"
 
 [tool.pytest.ini_options]
 testpaths = [
