@@ -180,3 +180,23 @@ def validateArgsAndRun(args):
         customizeOne(args)
 
     logger.info("script clean end")
+
+
+def main():
+
+    parser.add_argument('-c', '--config-file', required=False,
+        default= None)
+
+    parser.add_argument('-dr', '--dry-run', default = False, required=False, action='store_true' )
+    
+    parser.add_argument('-i', '--input', required=False, help= 'must be relative to current dir, default is stdin')
+    parser.add_argument('-f', '--format', required=False, help='json | yaml | env')
+    parser.add_argument('-o', '--output', required=False)
+    parser.add_argument('-t', '--template', required=False)
+    parser.add_argument('-r', '--reference-path',
+        default=os.getcwd(), required=False, help= 'reference path for -i and -o, default is stdout')
+    parser.add_argument('-v', '--output-validator', 
+        action='append', required=False)
+
+    args=parser.parse_args()
+    validateArgsAndRun(args)
