@@ -1,0 +1,54 @@
+# require to run with docker compose --project-directory .
+# ex : docker compose --project-directory . -f ./indus/docker/dev.docker-compose.yml up
+version: '3.6'
+
+# this file setup the dev-container
+services:
+  dev_container:
+    build:
+      context: .
+      dockerfile: ./indus/docker/Dockerfile
+      target: dev_env
+      args:
+        # Empty variables just copy current shell variables inside container
+        BUILD_TIME_ENV:
+    container_name: dev_container_python
+    user: "app:app"
+    # for debug
+    #user: "root:root"
+    extra_hosts:
+      host.docker.internal: host-gateway
+      # require a tunnel on host
+    # definition explicite
+    env_file: ./indus/env/.env
+    environment:
+        # to have poetry and pypi credentials inside dev container do not forget to set
+        # POETRY_HTTP_BASIC_XX_USERNAME=xxx
+        # POETRY_HTTP_BASIC_XX_PASSWORD=xxx
+        # "
+        # before running docker-compose up
+        RUN_TIME_ENV:
+      
+    network_mode: host
+    restart: always
+    command: wait_forever
+    entrypoint: /docker-run-entrypoint.sh
+    volumes:
+      - type: bind
+        source: /home/nheim/src/object_mapper
+        target: /app/object_mapper/
+      - type: bind
+        source: /home/nheim/src/perso-cv-jinja
+        target: /app/perso-cv-jinja
+      - type: bind
+        source: /home/nheim/src/devops-tools
+        target: /app/devops-tools
+      - type: bind
+        source: /home/nheim/src/git-sync
+        target: /app/git-sync
+        # env de dev vscode
+      - type: volume
+        source: vscode
+        target: /home/app/.vscode-server
+volumes:
+  vscode:

@@ -26,7 +26,7 @@ def test_EnvFileParser(logger: logging.Logger):
 
 def test_render_in_template(logger: logging.Logger):
     t: CustomizeOneParameters = CustomizeOneParameters(
-        reference_path = os.path.realpath('./tests/resources'),
+        reference_path = os.path.realpath('./tests/resources/'),
         input= os.path.realpath("./tests/resources/envFileTest"),
         template= 'renderInRender.j2',
         input_format= 'env' )

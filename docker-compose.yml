@@ -10,9 +10,9 @@ services:
       dockerfile: ./Dockerfile
       # target: dev_env
       #args:
-        # HPI_DOCKER_REGISTRY_URL: hpi-docker-stages.artifactory-principale.enedis.fr
+        # JTE_DOCKER_REGISTRY_URL: my-docker-registry.fr
         # Empty variables just copy current shell variables inside container
-        # HPI_BUILD_TIME_ENV:
+        # JTE_BUILD_TIME_ENV:
     container_name: dev_container_core
     user: "dev:dev"
     # for debug
@@ -20,20 +20,20 @@ services:
     # extra_hosts:
       # host.docker.internal: host-gateway
       # require a tunnel on host
-      # qual-col-noe-zci.enedis.fr: "127.0.0.1"
+      # overrided_host.fr: "127.0.0.1"
 
     # definition explicite
     env_file: .env
     environment:
         # to have poetry and pypi credentials inside dev container do not forget to set
-        # HPI_RUN_TIME_ENV="
-        # POETRY_HTTP_BASIC_HPI_PYPI_USERNAME=xxx
-        # POETRY_HTTP_BASIC_HPI_PYPI_PASSWORD=xxx
+        # JTE_RUN_TIME_ENV="
+        # POETRY_HTTP_BASIC_JTE_PYPI_USERNAME=xxx
+        # POETRY_HTTP_BASIC_JTE_PYPI_PASSWORD=xxx
         # "
         # before running docker-compose up
-        HPI_RUN_TIME_ENV:
+        JTE_RUN_TIME_ENV:
     network_mode: host
-    restart: always
+    restart: 
     entrypoint: /bin/bash
     command: [ "-c", "/bin/sleep 999999" ]
     # entrypoint: /docker-run-entrypoint.sh
@@ -43,11 +43,11 @@ services:
         target: /app/
         # env de dev vscode
       - type: volume
-        source: hpi_vscode
-        target: /home/hpi/.vscode-server
+        source: jte_vscode
+        target: /home/jte/.vscode-server
 volumes:
-  hpi_vscode:
+  jte_vscode:
 
 networks:
-  hpi:
+  jte:
     driver: bridge
