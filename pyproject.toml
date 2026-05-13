@@ -12,8 +12,8 @@ dependencies = [
 [project.optional-dependencies]
 dev = ["pylint", "pytest"]
 
-[project.scripts]
-jte = "jte:main_cli"
+[console_scripts]
+jte = "jinja_templating:modules:entry_point:jte"
 
 [tool.pytest.ini_options]
 testpaths = [
