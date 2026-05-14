@@ -2,11 +2,11 @@ import pprint
 import logging
 
 import os
+import sys
 
 from pytest import fixture
 
-
-from jinja_templating.modules.entry_point import validateArgsAndRun
+import jinja_templating.modules.entry_point as EntryPoint
 
 from jinja_templating.models.customize_one_parameters import CustomizeOneParameters
 from jinja_templating.modules.parser.env_file_parser import ImportEnvFile
@@ -24,11 +24,11 @@ def test_EnvFileParser(logger: logging.Logger):
 
 
 
-def test_render_in_template(logger: logging.Logger):
+def test_render_in_template():
     t: CustomizeOneParameters = CustomizeOneParameters(
         reference_path = os.path.realpath('./tests/resources/'),
-        input= os.path.realpath("./tests/resources/envFileTest"),
+        input_text= os.path.realpath("./tests/resources/envFileTest"),
         template= 'renderInRender.j2',
         input_format= 'env' )
 
-    validateArgsAndRun(t)
+    EntryPoint.validate_args_and_run(t)

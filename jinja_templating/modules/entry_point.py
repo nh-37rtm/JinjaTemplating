@@ -20,17 +20,17 @@ logger = customLogging.BuildCustomLogger("root")
 
 parser = ArgumentParser(description='Argument parser')
 
-def writeFile(outputFile : codecs.StreamReaderWriter, data: str) -> None:
-        if ( outputFile.writable ) :
-            outputFile.write(data)
+def writeFile(output_file : codecs.StreamReaderWriter, data: str) -> None:
+        if ( output_file.writable ) :
+            output_file.write(data)
 
-def openFile(fileName: str) -> codecs.StreamReaderWriter :
-    with codecs.open(fileName, "azer", errors='strict') as fileDescriptor:
-        return fileDescriptor
+def openFile(file_name: str) -> codecs.StreamReaderWriter :
+    with codecs.open(file_name, "azer", errors='strict') as file_descriptor:
+        return file_descriptor
 
-def validateOutput( args: dict ):
+def validate_output( args: dict ):
 
-    validatorActions: dict = {}
+    validator_actions: dict = {}
 
     if isinstance(args.output, io.TextIOWrapper):
         logger.warning('cannot validate stream')
@@ -45,35 +45,35 @@ def validateOutput( args: dict ):
 
     for validator in args.output_validator:
         if ( validator in validators.keys() ) :
-            validatorActions[validator] = validators[validator]
+            validator_actions[validator] = validators[validator]
         else :
-            raise Exception( f'Unknown format : {validator} waiting for any of {validators.keys()}')
+            raise Exception('Unknown format : %s waiting for any of %s' % (validator, validators.keys()))
 
-    logger.info(f"running validators on output {args.output} ...")
+    logger.info("running validators on output %s ...", args.output)
 
-    for validatorName, validateAction in validatorActions.items():
-        logger.info(f"passing the {validatorName} validator ...")
-        validateAction()
-        logger.info(f"validator passed successfully !")
+    for validator_name, validate_action in validator_actions.items():
+        logger.info("passing the %s validator ...", validator_name)
+        validate_action()
+        logger.info("validator passed successfully !")
 
-def customizeOne( args: dict ):
+def customize_one( args: dict ):
 
     context = Context.RendererContext( custom_controller=None,
         template_reference_path= args.reference_path)
 
     data_dictionnary: dict = None
 
-    formatChoice : dict[str, t.Any] = { 
-        'json' : lambda : jsonParser.ImportJsonFile(args.input),
-        'yaml' : lambda : yamlParser.ImportYamlFile(args.input),
-        'yml' : lambda : yamlParser.ImportYamlFile(args.input),
-        'env' : lambda : envFileParser.ImportEnvFile(args.input)
+    format_choice : dict[str, t.Any] = { 
+        'json' : lambda : jsonParser.ImportJsonFile(args.input_text),
+        'yaml' : lambda : yamlParser.ImportYamlFile(args.input_text),
+        'yml' : lambda : yamlParser.ImportYamlFile(args.input_text),
+        'env' : lambda : envFileParser.ImportEnvFile(args.input_text)
     }
 
-    if ( args.format in formatChoice.keys() ) :
-        data_dictionnary = formatChoice[args.format]()
+    if ( args.format in format_choice.keys() ) :
+        data_dictionnary = format_choice[args.format]()
     else :
-        raise Exception( f'Unknown format : {args.format} waiting for any of {formatChoice.keys()}')
+        raise ValueError( f'Unknown format : {args.format} waiting for any of {format_choice.keys()}')
 
     # require python 3.10
     # match False:
@@ -94,56 +94,57 @@ def customizeOne( args: dict ):
         data=data_dictionnary )
 
     if args.output_validator is not None and len(args.output_validator) > 0:
-        validateOutput(args)
+        validate_output(args)
 
-def customizeMultiImplicitDir( args: dict ):
+def customize_multi_implicit_dir( args: dict ):
+    """Customize multiple templates using implicit directory discovery."""
     if not os.path.isdir(args.template):
-        raise('should be a directory')
+        raise ValueError('should be a directory')
     
     glob.glob(args.template)
 
-def customizeMulti( args: dict, config_file_as_list: dict ):
+def customize_multi( args: dict, config_file_as_list: dict ):
     
     logger.info("config file mode")
     
-    expandedDict: dict = {}
+    expanded_dict: dict = {}
 
-    for templateFileName, templateAttributes in config_file_as_list.items():
-        if 'expandGlobInTemplateName' in templateAttributes:
-            logger.info(f"expanding expression '{templateFileName}' ...")
-            for expandedTemplateFileName in glob.glob(templateFileName):
-                logger.info(f"file mathing found '{expandedTemplateFileName}' to process ...")
-                expandedDict[expandedTemplateFileName] = templateAttributes.copy()
-                length = len(expandedTemplateFileName)
-                expandedDict[expandedTemplateFileName]['outputFile'] = expandedTemplateFileName[0:length - 3]
+    for template_file_name, template_attributes in config_file_as_list.items():
+        if 'expandGlobInTemplateName' in template_attributes:
+            logger.info("expanding expression '%s' ...", template_file_name)
+            for expanded_template_file_name in glob.glob(template_file_name):
+                logger.info("file mathing found '%s' to process ...", expanded_template_file_name)
+                expanded_dict[expanded_template_file_name] = template_attributes.copy()
+                length = len(expanded_template_file_name)
+                expanded_dict[expanded_template_file_name]['outputFile'] = expanded_template_file_name[0:length - 3]
         else:
-            expandedDict[templateFileName] = templateAttributes
+            expanded_dict[template_file_name] = template_attributes
 
-    templateNumber: int = 0
-    for templateFileName, templateAttributes in expandedDict.items():
-        templateArgs = copy.deepcopy(args)
-        logger.info(f"processing template file '{templateFileName}' ...")
-        templateArgs.template = templateFileName
-        templateArgs.format = templateAttributes['contextFormat']
-        templateArgs.output = templateAttributes['outputFile']
+    template_number: int = 0
+    for template_file_name, template_attributes in expanded_dict.items():
+        template_args = copy.deepcopy(args)
+        logger.info("processing template file '%s' ...", template_file_name)
+        template_args.template = template_file_name
+        template_args.format = template_attributes['contextFormat']
+        template_args.output = template_attributes['outputFile']
 
-        if 'outputValidator' in templateAttributes:
-            templateArgs.output_validator = [ templateAttributes['outputValidator'] ]
+        if 'outputValidator' in template_attributes:
+            template_args.output_validator = [ template_attributes['outputValidator'] ]
             ## TODO verifier la diff str os.stdout ...
-            if templateArgs.output is None:
+            if template_args.output is None:
                 parser.error("cannot validate if no output file set")
         else:
-            templateArgs.output_validator = []
+            template_args.output_validator = []
         #TODO manage override
 
-        if 'templatingContext' in templateAttributes:
-           templateArgs.input = templateAttributes['templatingContext']
-        templateNumber+=1
-        customizeOne(templateArgs)
+        if 'templatingContext' in template_attributes:
+           template_args.input = template_attributes['templatingContext']
+        template_number+=1
+        customize_one(template_args)
 
-    logger.info(f"{templateNumber} templates processed")
+    logger.info("%d templates processed", template_number)
 
-def validateArgsAndRun(args):
+def validate_args_and_run(args):
 
     if not args.config_file is None :
         if args.format is not None \
@@ -154,16 +155,16 @@ def validateArgsAndRun(args):
         if args.template is None:
             parser.error("-t is mandatory (when not using -c)")
         if args.format is None:
-            args.format = 'json'
-        if args.input is None:
-            args.input = sys.stdin
+            args.format = 'env'
+        if args.input_text is None:
+            args.input_text = sys.stdin
         if args.output is None:
             if not args.output_validator is None:
                 parser.error("cannot validate if no output file set")
             args.output = sys.stdout
 
     logger.info("program beginning ...")
-    logger.info(f"reference path is '{args.reference_path}'")
+    logger.info("reference path is '%s'", args.reference_path)
 
     os.chdir(args.reference_path)
 
@@ -171,13 +172,13 @@ def validateArgsAndRun(args):
     logger.info(pprint.pformat( args ))
 
     if not args.config_file is None:
-        logger.info(f"loading config file '{args.config_file}' ...")
+        logger.info("loading config file '%s' ...", args.config_file)
         # config: Dict = jsonParser.ImportJsonFile(args.config_file)
         config: dict = yamlParser.ImportYamlFile(args.config_file)
-        customizeMulti(args, config)
+        customize_multi(args, config)
     else:
         # if( os.path.isdir(args.template) )
-        customizeOne(args)
+        customize_one(args)
 
     logger.info("script clean end")
 
@@ -199,4 +200,4 @@ def main():
         action='append', required=False)
 
     args=parser.parse_args()
-    validateArgsAndRun(args)
+    validate_args_and_run(args)

@@ -7,11 +7,12 @@
         {
          "name": "Python: tests",
             "type": "debugpy",
+            "python": "${command:python.interpreterPath}",
             "request": "launch",
-            "program": "jte",
+            "program": "/opt/python/venv/bin/pytest",
             "cwd": "${workspaceFolder}",
             "console": "integratedTerminal",
-            "args": [ "-i", "./tests/resources/vars.json", "-t", "./tests/resources/toto.j2" ],
+            // "args": [ "-i", "./unit_tests/resources/envFileTest", "-t", "./unit_tests/resources/openvpn/openvpn.conf.j2" ],
             "justMyCode": false
             // "args": [ "-i", "./Tests/Resources/Mails/horus_logistique.json", "-t", "./Tests/Resources/Mails/Templates/mails-dev.j2" ]
             // "args": [ "-i", "./Tests/Resources/Mails/MFM.json", "-t", "./Tests/Resources/Mails/Templates/mails-ops.j2" ]

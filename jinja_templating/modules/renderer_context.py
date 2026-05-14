@@ -9,8 +9,6 @@ from urllib.parse import urljoin
 
 from jinja2 import Environment, FileSystemLoader
 
-# from kubernetes import client,config,utils
-
 class RendererContextRenderingInstance():
     def __init__(
             self,
@@ -36,7 +34,8 @@ class RendererContext:
         self._jinja_template_loader = FileSystemLoader(template_reference_path)
         self._jinja_template_env = Environment(loader=self._jinja_template_loader)
         self.controler = custom_controller
-        self._logger.info("initializing kube client ...")
+
+        # self._logger.info("initializing kube client ...")
         #config.load_kube_config()
         # self.kube_api_ = client.CoreV1Api(client.ApiClient())
         self._parent_template_reference_path = parent_template_reference_path

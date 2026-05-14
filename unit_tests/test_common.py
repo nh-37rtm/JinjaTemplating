@@ -13,7 +13,7 @@ import pprint
 
 class Test(unittest.TestCase):
 
-    def test_EnvFileParser(self):
+    def test_env_file_parser(self):
         result = envFileParser.ImportEnvFile( "./unit_tests/resources/envFileTest")
         pp = pprint.PrettyPrinter(depth=6)
         print(pp.pformat(result))
@@ -22,11 +22,11 @@ class Test(unittest.TestCase):
     def test_render_in_template(self):
         t: CustomizeOneParameters = CustomizeOneParameters(
             reference_path = os.path.realpath('.'),
-            input= os.path.realpath("./unit_tests/resources/envFileTest"),
+            input_text= os.path.realpath("./unit_tests/resources/envFileTest"),
             template= './unit_tests/resources/renderInRender.j2',
             input_format= 'env' )
 
-        ep.validateArgsAndRun(t)
+        ep.validate_args_and_run(t)
 
 if __name__ == '__main__':
     unittest.main()
