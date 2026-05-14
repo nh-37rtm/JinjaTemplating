@@ -1,7 +1,11 @@
 from typing import Dict, Union, TextIO
+import jinja_templating.modules.custom_logging as customLogging
 
+logger = customLogging.logging.getLogger("root")
 
 def readFile(file: Union[str, TextIO]) -> Dict:
+    logger.info("loading env file '%s' ...", file.name \
+        if isinstance(file, TextIO) else file)
     return dict(tuple(line.replace('\n', '').split('=')) for line
                         in file.readlines() 
                             if not line.startswith('#') 

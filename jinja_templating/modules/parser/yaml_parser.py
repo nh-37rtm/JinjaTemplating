@@ -6,7 +6,7 @@ def ImportYamlFile(filePath : str, multipleDocsAllowed : bool = False):
         if ( multipleDocsAllowed ):
             result = list(yaml.safe_load_all(file))
             if result is None:
-                raise Exception("no documents found in the generated yaml file !")
+                raise ValueError("no documents found in the generated yaml file !")
         else:
             result = yaml.safe_load(file)
         return result

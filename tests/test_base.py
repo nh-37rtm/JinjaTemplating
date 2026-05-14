@@ -2,7 +2,6 @@ import pprint
 import logging
 
 import os
-import sys
 
 from pytest import fixture
 
@@ -27,7 +26,7 @@ def test_EnvFileParser(logger: logging.Logger):
 def test_render_in_template():
     t: CustomizeOneParameters = CustomizeOneParameters(
         reference_path = os.path.realpath('./tests/resources/'),
-        input_text= os.path.realpath("./tests/resources/envFileTest"),
+        input_data= os.path.realpath("./tests/resources/envFileTest"),
         template= 'renderInRender.j2',
         input_format= 'env' )
 

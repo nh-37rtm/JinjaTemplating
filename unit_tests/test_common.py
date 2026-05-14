@@ -22,7 +22,7 @@ class Test(unittest.TestCase):
     def test_render_in_template(self):
         t: CustomizeOneParameters = CustomizeOneParameters(
             reference_path = os.path.realpath('.'),
-            input_text= os.path.realpath("./unit_tests/resources/envFileTest"),
+            input_data= os.path.realpath("./unit_tests/resources/envFileTest"),
             template= './unit_tests/resources/renderInRender.j2',
             input_format= 'env' )
 

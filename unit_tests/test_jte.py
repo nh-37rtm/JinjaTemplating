@@ -1,15 +1,10 @@
 
 
 import os
-import sys
 import unittest
 
-from models.customize_one_parameters import CustomizeOneParameters
-
-import modules.entry_point as ep
-
-sys.path.append(os.path.dirname(__file__) + '/../jinja_templating')
-
+from jinja_templating.models.customize_one_parameters import CustomizeOneParameters
+import jinja_templating.modules.entry_point as ep
 
 
 class Test(unittest.TestCase):
@@ -23,7 +18,7 @@ class Test(unittest.TestCase):
     def test_render_in_template(self):
         t: CustomizeOneParameters = CustomizeOneParameters(
             reference_path = os.path.realpath('.'),
-            input_text= os.path.realpath("./unit_tests/resources/envFileTest"),
+            input_data= os.path.realpath("./unit_tests/resources/envFileTest"),
             template= './unit_tests/resources/openvpn/openvpn.conf.j2',
             input_format= 'env' )
 

@@ -5,6 +5,7 @@ import random
 import string
 import sys
 from datetime import datetime
+from typing import IO, Union
 from urllib.parse import urljoin
 
 from jinja2 import Environment, FileSystemLoader
@@ -132,7 +133,7 @@ class RendererContext:
         self,
         template_path: str,
         data: object,
-        output: codecs.StreamReaderWriter = sys.stdout,
+        output: Union[codecs.StreamReaderWriter, str],
         dry_run_switch: bool = False) -> str:
             
             self.current_rendering_context = RendererContextRenderingInstance(
@@ -144,22 +145,23 @@ class RendererContext:
             self.current_data = data
             
             self._template_base_dir =  os.path.dirname(template_path)
-
-            self._logger.info(f'template reference path is: {self._template_reference_path}')
-            self._logger.info(f'rendering {template_path} to {output} ...')
+    
+            self._logger.info('template reference path is: %s', self._template_reference_path)
+            self._logger.info('rendering %s to %s ...', template_path, output)
             
             if isinstance(output, str) and \
                 os.path.exists(output) and \
                 os.path.isfile(output):
-                    self._logger.info(f'{output} exists and is a file, overwriting ...')
+                    self._logger.info('%s exists and is a file, overwriting ...', output)
 
             try :
                 template = self._jinja_template_env.get_template(template_path)
                 if ( not dry_run_switch ):
-                    template.stream(data, context= self, os=os).dump(output)
+                    buffer: IO[bytes] = IO[bytes]()
+                    template.stream(data, context= self, os=os).dump(buffer)
             except Exception as e:
                 type_name: str = type(e).__name__
-                error_message: str = None
+                error_message: str
                 if type_name == 'TemplateSyntaxError':
                     error_message = f'ko : Exception {type_name} in {e.name} => {e.message} at line {e.lineno}'
                 else:
@@ -167,7 +169,7 @@ class RendererContext:
                 self._logger.error(error_message)
                 raise e
             else :
-                self._logger.info(f'{template_path} rendered')
+                self._logger.info('%s rendered', template_path)
             finally :
                 if type(output) == 'codecs.StreamReaderWriter' :
                     output.close()
