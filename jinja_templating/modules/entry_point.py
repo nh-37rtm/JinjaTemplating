@@ -88,10 +88,18 @@ def customize_one( args: CustomizeOneParameters ):
     #         raise Exception(f'Unkown format : {args.format}')
 
     template_name_length = len(args.template)
-    context.render_template(
-        template_path= args.template,
-        output= args.template[0:template_name_length - 3],
-        data=data_dictionnary )
+
+    if isinstance(args.output, io.TextIOWrapper):
+        logger.warning('output is a stream, output validator will be ignored')
+        context.render_template(
+            template_path= args.template,
+            output= args.output,
+            data=data_dictionnary )
+    else:
+        context.render_template(
+            template_path= args.template,
+            output= args.template[0:template_name_length - 3],
+            data=data_dictionnary )
 
     if args.output_validator is not None and len(args.output_validator) > 0:
         validate_output(args)
