@@ -138,7 +138,21 @@ class RendererContext:
             output= current_output)
 
         return ''
+    
+    def include_file(self, path: str):
         
+        current_reference_path = self.iif( 
+                self._parent_template_reference_path is not None,
+                self._parent_template_reference_path,
+                self._template_reference_path)
+
+        file_content: str
+        with open(os.path.join(current_reference_path, path), 'r', encoding='utf-8') as file:
+            file_content = file.read()
+            
+        return file_content
+        
+    
     def render_template(
         self,
         template_path: str,
