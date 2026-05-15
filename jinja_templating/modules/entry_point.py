@@ -152,8 +152,9 @@ def customize_multi( args: CustomizeOneParameters, config_file_as_list: dict ):
 
     logger.info("%d templates processed", template_number)
 
-def validate_args_and_run(raw_args: Namespace):
 
+def rationalize_raw_args(raw_args: Namespace) -> CustomizeOneParameters:
+    
     if not raw_args.config_file is None :
         if raw_args.format is not None \
             or raw_args.output is not None \
@@ -170,10 +171,6 @@ def validate_args_and_run(raw_args: Namespace):
             raw_args.output = sys.stdout
             if not raw_args.output_validator is None:
                 parser.error("cannot validate if no output file set")
-            
-
-    logger.info("program beginning ...")
-    logger.info("reference path is '%s'", raw_args.reference_path)
 
     rationalized_arguments: CustomizeOneParameters = CustomizeOneParameters(
         reference_path = os.path.realpath(raw_args.reference_path),
@@ -186,20 +183,28 @@ def validate_args_and_run(raw_args: Namespace):
         template= raw_args.template,
         input_format= raw_args.format, 
         )
+    
+    return rationalized_arguments
 
-    os.chdir(raw_args.reference_path)
+
+def validate_args_and_run(args: CustomizeOneParameters):
+
+    logger.info("program beginning ...")
+    logger.info("reference path is '%s'", args.reference_path)
+
+    os.chdir(args.reference_path)
 
     pprint.PrettyPrinter(depth=6)
-    logger.info(pprint.pformat( raw_args ))
+    logger.info(pprint.pformat( args ))
 
-    if not raw_args.config_file is None:
-        logger.info("loading config file '%s' ...", raw_args.config_file)
+    if not args.config_file is None:
+        logger.info("loading config file '%s' ...", args.config_file)
         # config: Dict = jsonParser.ImportJsonFile(args.config_file)
-        config = yamlParser.ImportYamlFile(raw_args.config_file)
-        customize_multi(rationalized_arguments, config)
+        config = yamlParser.ImportYamlFile(args.config_file)
+        customize_multi(args, config)
     else:
         # if( os.path.isdir(args.template) )
-        customize_one(rationalized_arguments)
+        customize_one(args)
 
     logger.info("script clean end")
 
@@ -220,6 +225,7 @@ def main():
     parser.add_argument('-v', '--output-validator', 
         action='append', required=False)
 
-    args=parser.parse_args()   
+    raw_args=parser.parse_args()   
     
+    args = rationalize_raw_args(raw_args)
     validate_args_and_run(args)

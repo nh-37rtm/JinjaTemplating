@@ -157,11 +157,7 @@ class RendererContext:
             try :
                 template = self._jinja_template_env.get_template(template_path)
                 if ( not dry_run_switch ):
-                    if isinstance(output, str):
-                        with open(output, 'wb') as f:
-                            template.stream(data, context= self, os=os).dump(f)
-                    else:
-                        template.stream(data, context= self, os=os).dump(output)
+                    template.stream(data, context= self, os=os).dump(output)
             except Exception as e:
                 type_name: str = type(e).__name__
                 error_message: str

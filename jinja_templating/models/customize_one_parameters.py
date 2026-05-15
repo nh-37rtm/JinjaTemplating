@@ -1,4 +1,6 @@
 import io
+import os
+import sys
 from typing import Any, AnyStr, Union
 
 
@@ -12,8 +14,8 @@ class CustomizeOneParameters():
     output_validator: list[str]
 
     def __init__( 
-                 self, reference_path, input_data: Union[str, io.TextIOWrapper], input_format: str, 
-                 output: Union[str, io.TextIOWrapper], template: str):
+                 self, reference_path, input_data: Union[str, io.TextIOWrapper], input_format: str, template: str,
+                 output: Union[str, io.TextIOWrapper] = sys.stdout):
         self.reference_path = reference_path
         self.format = input_format
         self.output_validator = [ "yaml" ]
