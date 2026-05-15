@@ -172,16 +172,29 @@ def rationalize_raw_args(raw_args: Namespace) -> CustomizeOneParameters:
             if not raw_args.output_validator is None:
                 parser.error("cannot validate if no output file set")
 
+    rp_reference_path: str
+    rp_template_dir: str = os.path.dirname(os.path.realpath(raw_args.template))
+    template_file_name: str = os.path.basename(raw_args.template)
+
+    logger.info('template real path is: %s', os.path.join(rp_template_dir, template_file_name))
+
+    if raw_args.reference_path is not None:
+        rp_reference_path = os.path.realpath(raw_args.reference_path)
+        if not os.path.commonpath([rp_reference_path, rp_template_dir]):
+            parser.error(f"reference path '{rp_reference_path}' should be a parent of template directory '{rp_template_dir}' (jinja2 constraint)")
+    else:
+        rp_reference_path = rp_template_dir
+        
     rationalized_arguments: CustomizeOneParameters = CustomizeOneParameters(
-        reference_path = os.path.realpath(raw_args.reference_path),
+        reference_path = rp_reference_path,
         input_data= os.path.realpath(raw_args.input) \
                 if isinstance(raw_args.input, str) \
                 else raw_args.input,
         output= os.path.realpath(raw_args.output) \
             if isinstance(raw_args.output, str) \
             else raw_args.output,
-        template= raw_args.template,
-        input_format= raw_args.format, 
+        template= template_file_name,
+        input_format= raw_args.format,
         )
     
     return rationalized_arguments
@@ -220,8 +233,7 @@ def main():
     parser.add_argument('-f', '--format', required=False, help='json | yaml | env')
     parser.add_argument('-o', '--output', required=False)
     parser.add_argument('-t', '--template', required=False)
-    parser.add_argument('-r', '--reference-path',
-        default=os.getcwd(), required=False, help= 'reference path for -i and -o, default is stdout')
+    parser.add_argument('-r', '--reference-path', required=False, help= 'reference path for -i and -o, default is stdout')
     parser.add_argument('-v', '--output-validator', 
         action='append', required=False)
 
