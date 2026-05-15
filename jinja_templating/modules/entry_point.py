@@ -68,7 +68,8 @@ def customize_one( args: CustomizeOneParameters ):
         'json' : lambda : jsonParser.ImportJsonFile(args.input_data),
         'yaml' : lambda : yamlParser.ImportYamlFile(args.input_data),
         'yml' : lambda : yamlParser.ImportYamlFile(args.input_data),
-        'env' : lambda : envFileParser.ImportEnvFile(args.input_data)
+        'env' : lambda : os.environ,
+        'env_file' : lambda : envFileParser.ImportEnvFile(args.input_data)
     }
 
     if ( args.format in format_choice.keys() ) :
@@ -165,7 +166,7 @@ def rationalize_raw_args(raw_args: Namespace) -> CustomizeOneParameters:
             parser.error("-t is mandatory (when not using -c)")
         if raw_args.format is None:
             raw_args.format = 'env'
-        if raw_args.input is None:
+        if raw_args.format == 'env_file':
             raw_args.input = sys.stdin
         if raw_args.output is None:
             raw_args.output = sys.stdout
@@ -173,7 +174,8 @@ def rationalize_raw_args(raw_args: Namespace) -> CustomizeOneParameters:
                 parser.error("cannot validate if no output file set")
 
     rp_reference_path: str
-    rp_template_dir: str = os.path.dirname(os.path.realpath(raw_args.template))
+    
+    rp_template_dir: str = os.path.dirname(raw_args.template)
     template_file_name: str = os.path.basename(raw_args.template)
 
     logger.info('template real path is: %s', os.path.join(rp_template_dir, template_file_name))
@@ -205,8 +207,6 @@ def validate_args_and_run(args: CustomizeOneParameters):
     logger.info("program beginning ...")
     logger.info("reference path is '%s'", args.reference_path)
 
-    os.chdir(args.reference_path)
-
     pprint.PrettyPrinter(depth=6)
     logger.info(pprint.pformat( args ))
 
@@ -229,8 +229,8 @@ def main():
 
     parser.add_argument('-dr', '--dry-run', default = False, required=False, action='store_true' )
     
-    parser.add_argument('-i', '--input', required=False, help= 'must be relative to current dir, default is stdin')
-    parser.add_argument('-f', '--format', required=False, help='json | yaml | env')
+    parser.add_argument('-i', '--input', required=False, help= 'default for env_file format is stdin')
+    parser.add_argument('-f', '--format', required=False, help='env | json | yaml | env_file')
     parser.add_argument('-o', '--output', required=False)
     parser.add_argument('-t', '--template', required=False)
     parser.add_argument('-r', '--reference-path', required=False, help= 'reference path for -i and -o, default is stdout')

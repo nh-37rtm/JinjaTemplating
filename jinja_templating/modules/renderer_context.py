@@ -23,14 +23,15 @@ class RendererContextRenderingInstance():
 class RendererContext:
 
     _logger = logging.getLogger("root")
-    _template_base_dir : str = None
-    _template_reference_path : str = None
-    _parent_template_reference_path : str = None
-    current_rendering_context: 'RendererContextRenderingInstance' = None
+    _template_base_dir : str
+    _template_reference_path : str
+    _parent_template_reference_path : str
+    current_rendering_context: 'RendererContextRenderingInstance'
     # kube_api_: client.CoreV1Api = None
 
     # default constructor
-    def __init__(self, custom_controller, template_reference_path = os.getcwd(), parent_template_reference_path= None):
+    def __init__(self, custom_controller, parent_template_reference_path = None, 
+                 template_reference_path = os.getcwd()):
         self._template_reference_path = template_reference_path
         self._jinja_template_loader = FileSystemLoader(template_reference_path)
         self._jinja_template_env = Environment(loader=self._jinja_template_loader)
@@ -79,6 +80,15 @@ class RendererContext:
         if condition and value1:
             return value1
         return value2
+
+    def required_template_variables(self, variables_names: list[str]):
+        
+        for variable_name in variables_names:
+            if variable_name not in self.current_rendering_context.current_input:
+                raise ValueError(f'variable {variable_name} is required by template {self.current_rendering_context.current_template} but is not present in current input')
+            
+        return '# generated with vars: ' + ', '.join(variables_names)
+        
 
     def get_current_data(self):
         return self.current_data
